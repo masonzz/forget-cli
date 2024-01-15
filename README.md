@@ -1,6 +1,6 @@
 # :sunny:	forget-cli
 
-不再用记不住项目的 npm scripts 苦恼了:smile:。
+不再用记不住项目的 npm scripts 苦恼了 :smile: 。
 
 日常开发过程中，可能会遇到一些大型项目，项目内的 `npm scripts` 数量庞大，很难全部记住，经常需要去 `package.json` 内复制相应的 `script name` 然后执行。
 
