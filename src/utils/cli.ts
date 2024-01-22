@@ -10,6 +10,8 @@ import { Log } from "./log";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const separator = '丨';
+
 export const runCli = async () => {
   // 使用 fs.readFileSync 读取文件
   try {
@@ -28,7 +30,7 @@ export const runCli = async () => {
   const scripts = parsedJson.scripts;
 
   const scriptsFormatted = Object.entries(scripts).map(([key, value]) => {
-    return `${key}: ${value}`;
+    return `${key}${separator}${value}`;
   });
   if (scriptsFormatted.length === 0) {
     Log.error(
@@ -47,7 +49,7 @@ export const runCli = async () => {
     ])
     .then((answers) => {
       console.log(answers.script);
-      const command = answers.script.split(':')[0];
+      const command = answers.script.split(`${separator}`)[0];
       Log.info(`执行命令: npm run ${command}`);
       try {
         spawn('npm', ['run', command], { stdio: 'inherit' });
