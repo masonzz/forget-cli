@@ -4,8 +4,11 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import inquirer from "inquirer";
+import SearchList from 'inquirer-search-list';
 
 import { Log } from "./log";
+
+inquirer.registerPrompt('search-list', SearchList);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -41,18 +44,33 @@ export const runCli = async () => {
   inquirer
     .prompt([
       {
-        type: "list",
+        type: "search-list",
         name: "script",
         message: "请选择需要执行的命令",
         choices: scriptsFormatted,
+        loop: false,
+        searchable: true,
+        pageSize: 10
       },
+      {
+        type: "input",
+        name: "args",
+        message: "请输入额外的参数（可选，直接回车跳过）",
+      }
     ])
     .then((answers) => {
-      console.log(answers.script);
       const command = answers.script.split(`${separator}`)[0];
-      Log.info(`执行命令: npm run ${command}`);
+      const args = answers.args.trim();
+      
+      Log.info(`执行命令: npm run ${command}${args ? ' ' + args : ''}`);
       try {
-        spawn('npm', ['run', command], { stdio: 'inherit' });
+        const npmArgs = ['run', command];
+        if (args) {
+          // 加 --，确保参数正确传递给脚本
+          npmArgs.push('--');
+          npmArgs.push(...args.split(' '));
+        }
+        spawn('npm', npmArgs, { stdio: 'inherit' });
       } catch(e) {
         Log.error("命令执行失败", e);
       }
